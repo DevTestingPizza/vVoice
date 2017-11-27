@@ -110,43 +110,42 @@ function getProximity()
 end
 getProximity()
 
+function displayText(text, justification, red, green, blue, alpha, posx, posy)
+    SetTextFont(4)
+    SetTextWrap(0.0, 1.0)
+    SetTextScale(1.0, 0.5)
+    SetTextJustification(justification)
+    SetTextColour(red, green, blue, alpha)
+    SetTextOutline()
+
+    BeginTextCommandDisplayText("STRING") -- old: SetTextEntry()
+    AddTextComponentSubstringPlayerName(text) -- old: AddTextComponentString
+    EndTextCommandDisplayText(posx, posy) -- old: DrawText()
+end
+
 Citizen.CreateThread(function()
     while true do
         Citizen.Wait(0)
         NetworkSetTalkerProximity(prox)
         NetworkClearVoiceChannel()
         NetworkSetVoiceActive(voiceEnabled)
-        local a = 0
+        local playersTalking = {'empty'}
         if voiceEnabled then
             for i=0,31 do
                 if NetworkIsPlayerTalking(i) then
-                    displayInfo("~r~" .. GetPlayerName(i) .. " ~bb~is currently talking.", 255, 255, 255, 255, 0.40, (a * 0.02) + 0.001)
-                    a = a + 1
+                    playersTalking[i+1] = GetPlayerName(i)
+                end
+            end
+            
+            if playersTalking[1] ~= "empty" then
+                displayText("Currently talking:", 0, 255, 255, 255, 255, 0.5, 0.0)
+                
+                local count = 1
+                for k,v in pairs(playersTalking) do
+                    displayText("~f~" .. v, 0, 255, 255, 255, 255, 0.5, 0.025 + (0.025*(count-1)))
+                    count = count + 1
                 end
             end
         end
     end
 end)
-
-
-function displayInfo(text, red, green, blue, alpha, posx, posy)
-    local txt = text
-    local red = red
-    local green = green
-    local blue = blue
-    local alpha = alpha
-    local locx = posx
-    local locy = posy
-    
-    SetTextFont(0)
-    SetTextProportional(1)
-    SetTextScale(0.0, 0.34)
-    SetTextColour(red, green, blue, alpha)
-    SetTextDropShadow(50, 0, 0, 0, 255)
-    SetTextEdge(1, 0, 0, 0, 255)
-    SetTextDropshadow()
-    SetTextOutline()
-    SetTextEntry("STRING")
-    AddTextComponentString(txt)
-    DrawText(locx, locy)
-end
