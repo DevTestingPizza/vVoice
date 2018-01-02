@@ -131,18 +131,18 @@ Citizen.CreateThread(function()
         NetworkSetVoiceActive(voiceEnabled)
         local playersTalking = {'empty'}
         if voiceEnabled then
+            local count = 1
             for i=0,31 do
                 if NetworkIsPlayerTalking(i) then
-                    playersTalking[i+1] = GetPlayerName(i)
+                    playersTalking[count] = GetPlayerName(i)
+                    count = count + 1
                 end
             end
-            
             if playersTalking[1] ~= "empty" then
                 displayText("Currently talking:", 0, 255, 255, 255, 255, 0.5, 0.0)
-                
-                local count = 1
+                count = 0
                 for k,v in pairs(playersTalking) do
-                    displayText("~f~" .. v, 0, 255, 255, 255, 255, 0.5, 0.025 + (0.025*(count-1)))
+                    displayText("~f~" .. v, 0, 255, 255, 255, 255, 0.5, 0.025 + (0.025*(count)))
                     count = count + 1
                 end
             end
